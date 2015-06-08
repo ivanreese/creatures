@@ -1,8 +1,9 @@
-gulp = require 'gulp'
 autoprefixer = require 'gulp-autoprefixer'
+browserSync = require('browser-sync').create()
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
 debug = require 'gulp-debug'
+gulp = require 'gulp'
 gutil = require 'gulp-util'
 sass = require 'gulp-sass'
 serve = require 'gulp-serve'
@@ -28,12 +29,14 @@ paths =
 gulp.task 'html', ()->
   gulp.src paths.html.source
     .pipe gulp.dest paths.html.dest
+    .pipe browserSync.stream()
 
 gulp.task 'coffee', ()->
   gulp.src paths.coffee.source
     .pipe coffee(coffeeOptions).on('error', gutil.log)
     .pipe concat 'script.js'
     .pipe gulp.dest paths.coffee.dest
+    .pipe browserSync.stream()
 
 gulp.task 'sass', ()->
   gulp.src paths.sass.source
@@ -44,11 +47,13 @@ gulp.task 'sass', ()->
       remove: false
       cascade: false
     .pipe gulp.dest paths.sass.dest
+    .pipe browserSync.stream()
 
-gulp.task 'serve', serve
-  root: 'public'
-  redirect: true
-
+gulp.task 'serve', ()->
+  browserSync.init
+    server:
+      baseDir: "public"
+    
 gulp.task 'default', ['sass', 'coffee', 'html', 'serve'], ()->
   gulp.watch paths.sass.watch, ['sass']
   gulp.watch paths.coffee.watch, ['coffee']
