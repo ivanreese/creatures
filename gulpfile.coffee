@@ -49,7 +49,7 @@ gulp.task 'serve', serve
   root: 'public'
   redirect: true
 
-gulp.task 'dev', ['sass', 'coffee', 'html', 'serve'], ()->
+gulp.task 'default', ['sass', 'coffee', 'html', 'serve'], ()->
   gulp.watch paths.sass.watch, ['sass']
   gulp.watch paths.coffee.watch, ['coffee']
   gulp.watch paths.html.watch, ['html']
