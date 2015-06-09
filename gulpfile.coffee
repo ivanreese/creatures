@@ -14,7 +14,7 @@ coffeeOptions =
 
 paths =
   coffee:
-    source: 'source/**/*.coffee'
+    source: ['bower_components/take-and-make/dist/*.coffee', 'source/**/*.coffee']
     watch: 'source/**/*.coffee'
     dest: 'public'
   html:
