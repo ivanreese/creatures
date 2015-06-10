@@ -1,21 +1,31 @@
-Take "Worm", (Worm)->
-  worms = for i in [1..8]
-    Worm(i * 10)
+Take ["Worm", "math"], (Worm, math)->
+  return
+  oldest = 8
+  youngest = 1
+  
+  worms = for age in [oldest..youngest] # oldest first = oldest on top
+    Worm(math.lerp age, youngest, oldest)
 
-Take ["resize", "update", "svg"],
-  (resize, update, svg)->
-    Make "Worm", (segments)->
-      t = 0
+Take ["update", "SVG", "math"],
+  (update, SVG, math)->
+    lerpN = math.lerpN
+    phasor = math.phasor
+    
+    Make "Worm", (ageN)->
+      localTime = Math.random()
       goal = x: 0, y: 0
       
-      ling = phasor 12, 18, 1
-      sing = phasor 14, 17, 2
-      sping = phasor 0, segments/20, 2
+      lengthN = Math.random()
+      length = lerpN lengthN, 10, 100
       
-      segs = for i in [0...segments]
-        seg = svg.create "circle", r: 1
+      greyPr = phasor lerpN(ageN, .06, .16), lerpN(ageN, .16, .24), lerpN(ageN, 1.5, 0.5)
+      scalePr = phasor lerpN(ageN, 6, 10), lerpN(ageN, 7, 16), 2
+      speedPr = phasor lerpN(ageN, 0, 0), lerpN(ageN * lengthN, 0.5, 3), 2
+      
+      segs = for i in [0...length]
+        seg = SVG.create "circle", r: 1
         seg._y = seg._x = 0
-        grey seg, ling i/segments
+        SVG.grey seg, greyPr i/length
         seg
       
       newGoal = ()->
@@ -23,20 +33,21 @@ Take ["resize", "update", "svg"],
           x: Math.random() * 500 - 250
           y: Math.random() * 500 - 250
       
-      update (dt)->
-        t += dt
+      update (t, dt)->
+        localTime += dt
         
         seg = segs[0]
+        
         if seg._x is goal.x and seg._y is goal.y
           newGoal()
         
         for seg, i in segs
-          fraction = i/segments
+          segN = i/(length-1)
                   
-          s = sing(-fraction + t)
-          scale seg, lerp fraction, 0, 1, s, s * 3/4
+          scale = scalePr(localTime - segN)
+          SVG.scale seg, lerpN(segN, scale, scale * 3/4)
           
-          speed = sping fraction + t
+          speed = speedPr -segN + localTime
           
           if i is 0
             dx = goal.x - seg._x
@@ -54,4 +65,4 @@ Take ["resize", "update", "svg"],
             if Math.abs(dy) > speed
               seg._y += Math.sin(angle) * speed
             
-          move seg, seg._x, seg._y
+          SVG.move seg, seg._x, seg._y

@@ -5,7 +5,7 @@ do ()->
   tick = (time)->
     document.dispatchEvent
     for cb in callbacks
-      cb((time - lastTime)/1000)
+      cb(time/1000, (time - lastTime)/1000)
     lastTime = time
     requestAnimationFrame tick
   

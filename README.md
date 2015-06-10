@@ -4,7 +4,14 @@ Experimental procedural beings that might live on a website.
 
 ## Naming Scheme
 
-| name | meaning |
-| ---- | ------- |
-| *name*N | normalized between 0 and 1 |
-| n*Name* | a count of *name*s |
+name     | reading           | meaning
+-------- | ----------------- | -------
+*name*N  | *name* normalized | normalized to the range [0,1]
+*name*F  | *name* fraction   | normalized to the range [0,1)
+*name*E  | *name* exclusive  | normalized to the range (0,1)
+*name*I  | *name* index      | loop counter
+*name*P  | *name* phase      | some phase value within a range
+*name*Pr | *name* phasor     | a curried phasor function, waiting for phase
+n*Name*  | *name*s           | count of *names*s
+h*Name*  | half *name*       | half of *name*
+d*Name*  | delta *name*      | the amount that *name* has changed

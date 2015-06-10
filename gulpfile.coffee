@@ -1,12 +1,10 @@
-autoprefixer = require 'gulp-autoprefixer'
-browserSync = require('browser-sync').create()
-coffee = require 'gulp-coffee'
-concat = require 'gulp-concat'
-debug = require 'gulp-debug'
+browser_sync = require('browser-sync').create()
 gulp = require 'gulp'
-gutil = require 'gulp-util'
-sass = require 'gulp-sass'
-serve = require 'gulp-serve'
+g_autoprefixer = require 'gulp-autoprefixer'
+g_coffee = require 'gulp-coffee'
+g_concat = require 'gulp-concat'
+g_sass = require 'gulp-sass'
+g_util = require 'gulp-util'
 
 coffeeOptions =
   bare: true
@@ -14,7 +12,11 @@ coffeeOptions =
 
 paths =
   coffee:
-    source: ['bower_components/take-and-make/dist/*.coffee', 'source/**/*.coffee']
+    source: [
+      'bower_components/take-and-make/dist/*.coffee'
+      'bower_components/curry/dist/*.coffee'
+      'source/**/*.coffee'
+    ]
     watch: 'source/**/*.coffee'
     dest: 'public'
   html:
@@ -29,30 +31,32 @@ paths =
 gulp.task 'html', ()->
   gulp.src paths.html.source
     .pipe gulp.dest paths.html.dest
-    .pipe browserSync.stream()
+    .pipe browser_sync.stream()
 
 gulp.task 'coffee', ()->
   gulp.src paths.coffee.source
-    .pipe coffee(coffeeOptions).on('error', gutil.log)
-    .pipe concat 'script.js'
+    .pipe g_coffee coffeeOptions
+    .on 'error', g_util.log
+    .pipe g_concat 'script.js'
     .pipe gulp.dest paths.coffee.dest
-    .pipe browserSync.stream()
+    .pipe browser_sync.stream()
 
 gulp.task 'sass', ()->
   gulp.src paths.sass.source
-    .pipe sass
+    .pipe g_sass
       errLogToConsole: true
-    .pipe autoprefixer
+    .pipe g_autoprefixer
       browsers: 'last 2 versions'
       remove: false
       cascade: false
     .pipe gulp.dest paths.sass.dest
-    .pipe browserSync.stream()
+    .pipe browser_sync.stream()
 
 gulp.task 'serve', ()->
-  browserSync.init
+  browser_sync.init
     server:
       baseDir: "public"
+    open: false
     
 gulp.task 'default', ['sass', 'coffee', 'html', 'serve'], ()->
   gulp.watch paths.sass.watch, ['sass']

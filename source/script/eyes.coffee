@@ -1,9 +1,8 @@
-Take ["resize", "update", "svg"],
-  (resize, update, svg)->
+Take ["update", "svg"],
+  (update, svg)->
     return
     nEyePairs = 20
     
-    t = 0
     xing = phasor  50, 250, 1/12
     ying = phasor   0, 10, 1/12
     ling = phasor   12, 18
@@ -24,9 +23,8 @@ Take ["resize", "update", "svg"],
       left:  makeEye phase, -xing phase
       right: makeEye phase,  xing phase
     
-    update (dt)->
-      t += dt
+    update (time)->
       for eye, i in eyes
         phase = i/(nEyePairs+1)
-        styleEye eye.left,  phase + t, -xing phase
-        styleEye eye.right, phase + t,  xing phase
+        styleEye eye.left,  phase + time, -xing phase
+        styleEye eye.right, phase + time,  xing phase
