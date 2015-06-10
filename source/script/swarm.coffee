@@ -1,7 +1,7 @@
-Take "Plankton", (Plankton)->
-  nPlankton = 5
-  for i in [0...nPlankton]
-    Plankton(i/(nPlankton-1))
+Take "Swarm", (Swarm)->
+  nSwarms = 5
+  for i in [0...nSwarms]
+    Swarm(i/(nSwarms-1))
 
 Take ["update", "SVG", "math", "stage"],
   (update, SVG, math, stage)->
@@ -15,7 +15,7 @@ Take ["update", "SVG", "math", "stage"],
     move = SVG.move
     rotate = SVG.rotate
     
-    Make "Plankton", (ageN)->
+    Make "Swarm", (ageN)->
       body = SVG.create "g"
       
       time = 0

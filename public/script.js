@@ -281,12 +281,12 @@ Take(["update", "SVG", "math"], function(update, SVG, math) {
   });
 });
 
-Take("Plankton", function(Plankton) {
-  var i, j, nPlankton, ref, results;
-  nPlankton = 5;
+Take("Swarm", function(Swarm) {
+  var i, j, nSwarms, ref, results;
+  nSwarms = 5;
   results = [];
-  for (i = j = 0, ref = nPlankton; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-    results.push(Plankton(i / (nPlankton - 1)));
+  for (i = j = 0, ref = nSwarms; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+    results.push(Swarm(i / (nSwarms - 1)));
   }
   return results;
 });
@@ -302,7 +302,7 @@ Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
   rotateN = math.rotateN;
   move = SVG.move;
   rotate = SVG.rotate;
-  return Make("Plankton", function(ageN) {
+  return Make("Swarm", function(ageN) {
     var angle, body, chaos, energy, i, iF, nPieces, nPoints, piece, pieceI, pieces, points, rhythmP, rotationP, spreadAge, spreadMax, spreadMin, time, x, xRhythm, y, yRhythm;
     body = SVG.create("g");
     time = 0;
