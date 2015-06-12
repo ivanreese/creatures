@@ -1,31 +1,30 @@
 Take ["Worm", "math"], (Worm, math)->
   return
-  oldest = 8
-  youngest = 1
-  
-  worms = for age in [oldest..youngest] # oldest first = oldest on top
-    Worm(math.lerp age, youngest, oldest)
+  nWorms = 10
+  worms = for i in [0...nWorms]
+    Worm i/(nWorms-1)
 
 Take ["update", "SVG", "math"],
   (update, SVG, math)->
-    lerpN = math.lerpN
+    lerp = math.lerp
     phasor = math.phasor
+    grey = SVG.grey
     
     Make "Worm", (ageN)->
       localTime = Math.random()
       goal = x: 0, y: 0
       
       lengthN = Math.random()
-      length = lerpN lengthN, 10, 100
+      length = lerp 10, 100, lengthN
       
-      greyPr = phasor lerpN(ageN, .06, .16), lerpN(ageN, .16, .24), lerpN(ageN, 1.5, 0.5)
-      scalePr = phasor lerpN(ageN, 6, 10), lerpN(ageN, 7, 16), 2
-      speedPr = phasor lerpN(ageN, 0, 0), lerpN(ageN * lengthN, 0.5, 3), 2
+      greyPr = phasor lerp(.06, .16, ageN), lerp(.16, .24, ageN), lerp(1.5, 0.5, ageN)
+      scalePr = phasor lerp(6, 10, ageN), lerp(7, 16, ageN), 2
+      speedPr = phasor lerp(0, 0, ageN), lerp(0.5, 3, ageN * lengthN), 2
       
       segs = for i in [0...length]
         seg = SVG.create "circle", r: 1
         seg._y = seg._x = 0
-        SVG.grey seg, greyPr i/length
+        grey seg, greyPr i/length
         seg
       
       newGoal = ()->
@@ -45,7 +44,7 @@ Take ["update", "SVG", "math"],
           segN = i/(length-1)
                   
           scale = scalePr(localTime - segN)
-          SVG.scale seg, lerpN(segN, scale, scale * 3/4)
+          SVG.scale seg, lerp(scale, scale * 3/4, segN)
           
           speed = speedPr -segN + localTime
           

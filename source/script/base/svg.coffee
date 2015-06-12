@@ -45,6 +45,7 @@ Take "stage", (stage)->
     
     grey: (elm, l)->
       SVG.attr elm, "fill", "hsl(0, 0%, #{l*100}%)"
+      elm # Chainable
   
   stage.onResize (w, h, hW, hH)->
     SVG.attr container, "transform", "translate(#{hW}, #{hH})"

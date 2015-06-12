@@ -5,17 +5,14 @@ Take "Curry", (Curry)->
   
     TAU: Math.PI * 2
 
-    lerp: (i, inmin, inmax, outmin = 0, outmax = 1)->
-      i -= inmin
-      i /= (inmax - inmin)
-      i *= (outmax - outmin)
-      i += outmin
-      i
+    # lerp: (i, inmin, inmax, outmin = 0, outmax = 1)->
+    #   i -= inmin
+    #   i /= (inmax - inmin)
+    #   i *= (outmax - outmin)
+    #   i += outmin
+    #   i
       
-    lerpN: (i, min, max)->
-      i * (max - min) + min
-
-    lerpNEW: (min, max, i)->
+    lerp: (min, max, i)->
       i * (max - min) + min
 
     lerps: (i, min, max)->
