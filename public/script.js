@@ -144,8 +144,6 @@ var slice = [].slice;
   });
 })();
 
-
-
 Take(["update", "svg"], function(update, svg) {
   var eyes, i, ling, makeEye, nEyePairs, phase, sing, styleEye, xing, ying;
   return;
@@ -281,6 +279,90 @@ Take(["update", "SVG", "math"], function(update, SVG, math) {
   });
 });
 
+Take(["update", "SVG", "math", "stage", "Tentacle"], function(update, SVG, math, stage, Tentacle) {
+  var d, gauss, grey, group, lerp, makeBody, move, phasor, primeN, ramp, rnd, rotate, rotateN, scale;
+  return;
+  lerp = math.lerp;
+  phasor = math.phasor;
+  gauss = math.gauss;
+  ramp = math.ramp;
+  primeN = math.primeN;
+  rotateN = math.rotateN;
+  move = SVG.move;
+  rotate = SVG.rotate;
+  scale = SVG.scale;
+  grey = SVG.grey;
+  group = function(parent) {
+    return SVG.create("g", null, parent);
+  };
+  rnd = function(c, s) {
+    if (c == null) {
+      c = 0.5;
+    }
+    if (s == null) {
+      s = 1;
+    }
+    return lerp(c - s / 2, c + s / 2, Math.random());
+  };
+  d = "M-41,-1 C-43,-51 43,-52 41,2 L38,60 C21,101 -20,101 -36,61 Z";
+  Take("Octo", function(Octo) {
+    var o;
+    return o = Octo(0.5).root;
+  });
+  makeBody = function(parent, size, lightness) {
+    var angle, body, i, j, parts, points, ref, x, y;
+    parts = [];
+    points = lerp(5, 21, size);
+    for (i = j = 0, ref = points; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+      angle = i / points * math.TAU;
+      x = Math.round((Math.sin(angle)) * gauss(50, 200, i / points));
+      y = Math.round((Math.cos(angle)) * gauss(50, 200, i / points));
+      if (i === 0) {
+        parts.push("M" + x + "," + y);
+      } else {
+        parts.push("T" + x + "," + y);
+      }
+    }
+    parts.push("Z");
+    body = SVG.create("path", {
+      d: parts.join(" ")
+    }, parent);
+    grey(body, lightness);
+    return body;
+  };
+  return Make("Octo", function(size) {
+    var angle, angleSpread, body, i, iN, j, nTentacles, octo, ref, root, spread, t, x, y;
+    root = group();
+    scale(root, lerp(0.02, 1, size));
+    body = makeBody(root, size, 0.22);
+    nTentacles = Math.round(lerp(3, 8, Math.pow(size, 2)));
+    for (i = j = 0, ref = nTentacles; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+      iN = i / (nTentacles - 1) || 0;
+      t = Tentacle(root, size).root;
+      spread = lerp(rnd(1.7), 1, size);
+      angle = lerp(-spread, spread, iN);
+      x = Math.sin(angle) * 120;
+      y = Math.cos(angle) * 40;
+      move(t, x, y);
+      angleSpread = lerp(rnd(spread / 10, 0.2), spread / 5, Math.pow(size, 1 / 2));
+      rotate(t, phasor(angleSpread, -angleSpread, 0.25, iN - 0.5));
+      scale(t, lerp(rnd(1, 0.2), 0.5, size));
+    }
+    update(function(t, dt) {
+      var wiggleAngle, wiggleMax;
+      x = gauss(-100, 100, t / 17);
+      y = gauss(-100, -200, t / 27);
+      move(root, x, y);
+      wiggleMax = lerp(0, 0.02, 1, t / 37);
+      wiggleAngle = gauss(-wiggleMax, wiggleMax, t / 19);
+      return rotate(root, wiggleAngle);
+    });
+    return octo = {
+      root: root
+    };
+  });
+});
+
 Take("Swarm", function(Swarm) {
   var i, j, nSwarms, ref, results;
   nSwarms = 0;
@@ -412,12 +494,8 @@ Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
   });
 });
 
-Take("Tentacle", function(Tentacle) {
-  return Tentacle(50);
-});
-
 Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
-  var d, gauss, grey, lerp, makeCircle, makeSeg, mouse, move, phasor, primeN, ramp, rnd, rotate, rotateN, scale;
+  var d, gauss, grey, lerp, makeCircle, makeContainer, makeSeg, mouse, move, phasor, primeN, ramp, rnd, rotate, rotateN, scale;
   lerp = math.lerp;
   phasor = math.phasor;
   gauss = math.gauss;
@@ -438,13 +516,26 @@ Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
     return lerp(c - s / 2, c + s / 2, Math.random());
   };
   d = "M-41,-1 C-43,-51 43,-52 41,2 L38,60 C21,101 -20,101 -36,61 Z";
+  makeContainer = function(parent) {
+    var container;
+    container = SVG.create("g", null, parent);
+    container._phase = Math.random() * 1000;
+    return container;
+  };
   makeCircle = function(parent, rc, rs, xc, xs, yc, ys, g) {
-    scale(grey(move(SVG.create("circle", {
+    var left, right;
+    left = SVG.create("circle", {
       r: rnd(rc, rs)
-    }, parent), rnd(-xc, xs), rnd(yc, ys)), g), rnd(1, 0.1), rnd(1, 0.1));
-    return scale(grey(move(SVG.create("circle", {
+    }, parent);
+    right = SVG.create("circle", {
       r: rnd(rc, rs)
-    }, parent), rnd(+xc, xs), rnd(yc, ys)), g), rnd(1, 0.1), rnd(1, 0.1));
+    }, parent);
+    move(left, rnd(-xc, xs), rnd(yc, ys));
+    move(right, rnd(+xc, xs), rnd(yc, ys));
+    grey(left, g);
+    grey(right, g);
+    scale(left, rnd(1, 0.1), rnd(1, 0.1));
+    return scale(right, rnd(1, 0.1), rnd(1, 0.1));
   };
   makeSeg = function(parent, g) {
     return grey(SVG.create("path", {
@@ -459,38 +550,48 @@ Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
     mouse.x = e.clientX - stage.hWidth;
     return mouse.y = e.clientY - stage.hHeight;
   });
-  return Make("Tentacle", function(length) {
-    var container, containers, i, j, lightness, parent, ref, root;
+  return Make("Tentacle", function(owner, size) {
+    var container, containers, i, iM, iN, j, length, lightness, maxLength, parent, ref, root, suckerSegs, tentacle;
+    maxLength = 50;
+    length = lerp(30, maxLength, Math.random());
     containers = [];
-    parent = root = SVG.create("g");
-    move(root, 0, -stage.hHeight);
-    makeCircle(parent, 25, 3, 27, 2, 10, 2, 0.23);
+    parent = root = makeContainer(owner);
+    scale(root, size);
+    makeCircle(parent, 25, 3, 27, 2, 0, 2, 0.23);
     makeCircle(parent, 24, 2, 25, 2, 60, 2, 0.22);
     makeSeg(parent, 0.2);
+    suckerSegs = Math.sqrt(size) * 50 - 10;
     for (i = j = 0, ref = length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-      container = SVG.create("g", null, parent);
-      move(container, rnd(), rnd(50));
-      scale(container, rnd(0.90, 0.02), rnd(0.92, 0.02));
-      container._phase = Math.random() * 10;
-      parent = container;
+      iN = i / (length - 1);
+      iM = i / (maxLength - 1);
+      parent = container = makeContainer(parent);
       containers.push(container);
-      lightness = lerp(0.2, 0, i / (length - 1) + (phasor(0.05, -0.05, 8, i / (length - 1))));
-      lightness += Math.pow(1 - i / length - 1, 4);
-      makeCircle(parent, 22, 2, 24, 2, 60, 2, lightness + 0.02);
+      move(container, rnd(), rnd(60));
+      scale(container, rnd(0.92, 0.02), rnd(0.95, 0.02));
+      lightness = lerp(0.2, 0, iM + (phasor(0.05, -0.05, 8, iM)));
+      lightness += Math.pow(iM, 4);
+      if (i < suckerSegs) {
+        makeCircle(parent, 22, 2, 24, 2, 60, 2, lightness + 0.02);
+      }
       makeSeg(parent, lightness);
     }
-    return update(function(t, dt) {
-      var angle, iN, k, len, maxAngle, results;
+    update(function(t, dt) {
+      var curlAngle, k, len, results, straightTip, wiggleAngle, wiggleMax;
       results = [];
       for (i = k = 0, len = containers.length; k < len; i = ++k) {
         container = containers[i];
         iN = i / (length - 1);
-        maxAngle = phasor(0, 0.05, 1 - iN, t / 50 + container._phase);
-        angle = gauss(-maxAngle, maxAngle, t / 10 + container._phase);
-        results.push(rotate(container, angle));
+        wiggleMax = phasor(0, 0.05, 1 - iN, t / 51 + container._phase);
+        wiggleAngle = gauss(-wiggleMax, wiggleMax, t / 13 + container._phase);
+        curlAngle = (gauss(-0.1, 0.1, t / 11 + container._phase)) * Math.sqrt(iN);
+        straightTip = lerp(1, 0, iN);
+        results.push(rotate(container, (curlAngle + wiggleAngle) * straightTip));
       }
       return results;
     });
+    return tentacle = {
+      root: root
+    };
   });
 });
 
@@ -659,3 +760,5 @@ Take("stage", function(stage) {
     return callbacks.push(cb);
   });
 })();
+
+
