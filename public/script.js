@@ -144,6 +144,8 @@ var slice = [].slice;
   });
 })();
 
+
+
 Take(["update", "svg"], function(update, svg) {
   var eyes, i, ling, makeEye, nEyePairs, phase, sing, styleEye, xing, ying;
   return;
@@ -276,6 +278,227 @@ Take(["update", "SVG", "math"], function(update, SVG, math) {
       }
       return results;
     });
+  });
+});
+
+Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
+  var gauss, grey, lerp, makeLayer, makeVein, move, phasor, primeN, ramp, rnd, rotate, rotateN, scale;
+  lerp = math.lerp;
+  phasor = math.phasor;
+  gauss = math.gauss;
+  ramp = math.ramp;
+  primeN = math.primeN;
+  rotateN = math.rotateN;
+  move = SVG.move;
+  rotate = SVG.rotate;
+  scale = SVG.scale;
+  grey = SVG.grey;
+  rnd = function(c, s) {
+    if (c == null) {
+      c = 0.5;
+    }
+    if (s == null) {
+      s = 1;
+    }
+    return lerp(c - s / 2, c + s / 2, Math.random());
+  };
+  Take("Iris", function(Iris) {
+    return Iris();
+  });
+  makeVein = function(phase, startY, endY, nPoints, wobbling, wiggling) {
+    var baseX, j, p, pN, pNmid, parts, ref, wiggle, wobble, x, xWobble, xmid, y, ymid;
+    x = 0;
+    y = startY;
+    parts = ["M" + x + "," + y];
+    wiggle = wiggling * gauss(0.1, 10, phase);
+    for (p = j = 1, ref = nPoints; 1 <= ref ? j < ref : j > ref; p = 1 <= ref ? ++j : --j) {
+      pN = p / (nPoints - 1);
+      pNmid = (p - 0.5) / (nPoints - 1);
+      xmid = phasor(-wobbling / 5, wobbling / 5, wiggle, pNmid);
+      ymid = lerp(startY, endY, pNmid);
+      wobble = phasor(0.5, 2, wiggle, pN);
+      xWobble = phasor(-wobbling, wobbling, wobble, pN);
+      baseX = rnd(Math.pow(pN, 4), wiggle);
+      x = gauss(baseX, xWobble, pN);
+      y = lerp(startY, endY, pN);
+      parts.push("S" + xmid + "," + ymid + " " + x + "," + y);
+    }
+    return parts.join(" ");
+  };
+  makeLayer = function(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR) {
+    var eY, i, iF, iN, j, nP, options, ref, results, sY, vein;
+    results = [];
+    for (i = j = 0, ref = nVeins; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+      iN = i / (nVeins - 1);
+      iF = i / nVeins;
+      sY = rnd(startY, startY / 2);
+      eY = rnd(endY, endY / 3);
+      nP = rnd(nPoints, nPointsR) | 0;
+      options = {
+        d: makeVein(iN, sY, eY, nP, wobbling, wiggling),
+        fill: "none",
+        stroke: stroke,
+        "stroke-width": rnd(width, widthR),
+        "stroke-linecap": "round"
+      };
+      vein = SVG.create("path", options, parent);
+      results.push(rotate(vein, rnd(iF, angleR)));
+    }
+    return results;
+  };
+  return Make("Iris", function(parent) {
+    var angleR, endY, nPoints, nPointsR, nVeins, startY, stroke, width, widthR, wiggling, wobbling;
+    SVG.createRadialGradient("glowFG", true, "hsla(46,96%,73%,0.1)", "hsla(240,100%,70%,0.2)", "hsla(240,100%,70%,0)");
+    SVG.createRadialGradient("glowBG", true, "hsla(46,96%,73%,0.8)", "hsla(240,100%,70%,0)");
+    SVG.createGradient("singe", true, "#F42614", "#FEE070", "#EAB46F", "#775A45", "#3D2A0F");
+    nVeins = 100;
+    startY = 50;
+    endY = 150;
+    nPoints = 10;
+    nPointsR = 4;
+    wobbling = 2;
+    wiggling = .5;
+    width = 2;
+    widthR = 1.4;
+    stroke = "url(#singe)";
+    angleR = 0.1;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    SVG.create("circle", {
+      r: 400,
+      fill: "url(#glowFG)"
+    });
+    nVeins = 60;
+    startY = 30;
+    endY = 50;
+    nPoints = 5;
+    nPointsR = 3;
+    wobbling = 0.8;
+    wiggling = 0;
+    width = 3;
+    widthR = 2;
+    stroke = "#020603";
+    angleR = 0.03;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 100;
+    startY = 40;
+    endY = 200;
+    nPoints = 10;
+    nPointsR = 4;
+    wobbling = 5;
+    wiggling = 1;
+    width = 1.5;
+    widthR = 1.4;
+    stroke = "#E15B2C";
+    angleR = 0.1;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 100;
+    startY = 40;
+    endY = 200;
+    nPoints = 10;
+    nPointsR = 4;
+    wobbling = 5;
+    wiggling = 1;
+    width = 1.5;
+    widthR = 1.4;
+    stroke = "#AD3D20";
+    angleR = 0.1;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 100;
+    startY = 60;
+    endY = 100;
+    nPoints = 10;
+    nPointsR = 4;
+    wobbling = 1;
+    wiggling = .2;
+    width = 4;
+    widthR = 2;
+    stroke = "#FEE5BD";
+    angleR = 0.1;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 100;
+    startY = 50;
+    endY = 150;
+    nPoints = 10;
+    nPointsR = 4;
+    wobbling = 5;
+    wiggling = 2;
+    width = 5;
+    widthR = 2;
+    stroke = "#AE2522";
+    angleR = 0.1;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 20;
+    startY = 15;
+    endY = 40;
+    nPoints = 5;
+    nPointsR = 3;
+    wobbling = 5;
+    wiggling = 4;
+    width = 2;
+    widthR = 1;
+    stroke = "#600403";
+    angleR = 0.03;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    SVG.create("circle", {
+      r: 50,
+      fill: "#500202"
+    });
+    SVG.create("circle", {
+      r: 120,
+      fill: "#FF0000"
+    });
+    SVG.create("circle", {
+      r: 300,
+      fill: "url(#glowBG)"
+    });
+    nVeins = 100;
+    startY = 200;
+    endY = 300;
+    nPoints = 20;
+    nPointsR = 3;
+    wobbling = 3;
+    wiggling = 0.2;
+    width = 10;
+    widthR = 2;
+    stroke = "#020603";
+    angleR = 0.03;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 250;
+    startY = 200;
+    endY = 300;
+    nPoints = 20;
+    nPointsR = 3;
+    wobbling = 3;
+    wiggling = 0.2;
+    width = 5;
+    widthR = 2;
+    stroke = "#020603";
+    angleR = 0.03;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 250;
+    startY = 200;
+    endY = 350;
+    nPoints = 20;
+    nPointsR = 3;
+    wobbling = 3;
+    wiggling = 0.2;
+    width = 2;
+    widthR = 1.9;
+    stroke = "#020603";
+    angleR = 0.03;
+    makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
+    nVeins = 250;
+    startY = 250;
+    endY = 350;
+    nPoints = 20;
+    nPointsR = 3;
+    wobbling = 3;
+    wiggling = 0.2;
+    width = 0.5;
+    widthR = 0;
+    stroke = "#020603";
+    angleR = 0.03;
+    return makeLayer(parent, nVeins, startY, endY, nPoints, nPointsR, wobbling, wiggling, width, widthR, stroke, angleR);
   });
 });
 
@@ -663,20 +886,30 @@ Take("Curry", function(Curry) {
   return doResize();
 })();
 
+var slice = [].slice;
+
 Take("stage", function(stage) {
-  var SVG, container, root, svgNS;
+  var SVG, container, defs, root, svgNS;
   svgNS = "http://www.w3.org/2000/svg";
   root = document.querySelector("svg");
+  defs = root.querySelector("defs");
   container = document.createElementNS(svgNS, "g");
   root.appendChild(container);
   Make("SVG", SVG = {
-    create: function(type, init, parent) {
+    create: function(type, init, parent, append) {
       var elm, k, v;
       if (parent == null) {
         parent = container;
       }
+      if (append == null) {
+        append = false;
+      }
       elm = document.createElementNS(svgNS, type);
-      SVG.prependChild(parent, elm);
+      if (append) {
+        parent.appendChild(elm);
+      } else {
+        SVG.prependChild(parent, elm);
+      }
       for (k in init) {
         v = init[k];
         SVG.attr(elm, k, v);
@@ -731,6 +964,46 @@ Take("stage", function(stage) {
     grey: function(elm, l) {
       SVG.attr(elm, "fill", "hsl(0, 0%, " + (l * 100) + "%)");
       return elm;
+    },
+    createGradient: function() {
+      var grad, i, iN, j, len, name, options, stop, stops, vertical;
+      name = arguments[0], vertical = arguments[1], stops = 3 <= arguments.length ? slice.call(arguments, 2) : [];
+      options = vertical ? {
+        x1: 0,
+        x2: 0,
+        y1: 0,
+        y2: 1,
+        id: name
+      } : {
+        id: name
+      };
+      grad = SVG.create("linearGradient", options, defs);
+      for (i = j = 0, len = stops.length; j < len; i = ++j) {
+        stop = stops[i];
+        iN = i / (stops.length - 1);
+        SVG.create("stop", {
+          offset: iN * 100 + "%",
+          "stop-color": stop
+        }, grad, true);
+      }
+      return null;
+    },
+    createRadialGradient: function() {
+      var grad, i, iN, j, len, name, options, stop, stops;
+      name = arguments[0], stops = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+      options = {
+        id: name
+      };
+      grad = SVG.create("radialGradient", options, defs);
+      for (i = j = 0, len = stops.length; j < len; i = ++j) {
+        stop = stops[i];
+        iN = i / (stops.length - 1);
+        SVG.create("stop", {
+          offset: iN * 100 + "%",
+          "stop-color": stop
+        }, grad, true);
+      }
+      return null;
     }
   });
   return stage.onResize(function(w, h, hW, hH) {
@@ -760,5 +1033,3 @@ Take("stage", function(stage) {
     return callbacks.push(cb);
   });
 })();
-
-

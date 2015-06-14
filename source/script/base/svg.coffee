@@ -1,13 +1,17 @@
 Take "stage", (stage)->
   svgNS = "http://www.w3.org/2000/svg"
   root = document.querySelector "svg"
+  defs = root.querySelector "defs"
   container = document.createElementNS svgNS, "g"
   root.appendChild container
   
   Make "SVG", SVG =
-    create: (type, init, parent = container)->
+    create: (type, init, parent = container, append = false)->
       elm = document.createElementNS svgNS, type
-      SVG.prependChild parent, elm
+      if append
+        parent.appendChild elm
+      else
+        SVG.prependChild parent, elm
       for k, v of init
         SVG.attr elm, k, v
       elm
@@ -46,6 +50,30 @@ Take "stage", (stage)->
     grey: (elm, l)->
       SVG.attr elm, "fill", "hsl(0, 0%, #{l*100}%)"
       elm # Chainable
+    
+    createGradient: (name, vertical, stops...)->
+      options = if vertical
+        x1: 0
+        x2: 0
+        y1: 0
+        y2: 1
+        id: name
+      else
+        id: name
+      
+      grad = SVG.create "linearGradient", options, defs
+      for stop, i in stops
+        iN = i/(stops.length-1)
+        SVG.create "stop", {offset: iN*100+"%", "stop-color": stop}, grad, true
+      null # Not Chainable!
+  
+    createRadialGradient: (name, stops...)->
+      options = id: name
+      grad = SVG.create "radialGradient", options, defs
+      for stop, i in stops
+        iN = i/(stops.length-1)
+        SVG.create "stop", {offset: iN*100+"%", "stop-color": stop}, grad, true
+      null # Not Chainable!
   
   stage.onResize (w, h, hW, hH)->
     SVG.attr container, "transform", "translate(#{hW}, #{hH})"
