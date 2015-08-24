@@ -1,5 +1,5 @@
-Take ["update", "SVG", "math", "stage", "Tentacle"],
-  (update, SVG, math, stage, Tentacle)->
+Take ["update", "SVG", "math"],
+  (update, SVG, math)->
 
     group = (parent)-> SVG.create "g", null, parent
     rnd = (c=0.5,s=1)-> math.lerp c-s/2, c+s/2, Math.random()

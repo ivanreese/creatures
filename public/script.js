@@ -591,7 +591,7 @@ Take(["update", "SVG", "math", "stage", "Tentacle"], function(update, SVG, math,
   });
 });
 
-Take(["update", "SVG", "math", "stage", "Tentacle"], function(update, SVG, math, stage, Tentacle) {
+Take(["update", "SVG", "math"], function(update, SVG, math) {
   var group, input, rnd;
   group = function(parent) {
     return SVG.create("g", null, parent);
