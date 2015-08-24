@@ -1,6 +1,12 @@
-Take ["update", "svg"],
-  (update, svg)->
+Take ["update", "SVG", "math"],
+  (update, SVG, math)->
     return
+    
+    phasor = math.phasor
+    move = SVG.move
+    grey = SVG.grey
+    scale = SVG.scale
+    
     nEyePairs = 20
     
     xing = phasor  50, 250, 1/12
@@ -15,7 +21,7 @@ Take ["update", "svg"],
       eye
     
     makeEye = (phase, x)->
-      eye = svg.create "circle", r: 1
+      eye = SVG.create "circle", r: 1
       styleEye eye, phase, x
     
     eyes = for i in [0...nEyePairs]

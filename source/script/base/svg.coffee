@@ -50,6 +50,10 @@ Take "stage", (stage)->
     grey: (elm, l)->
       SVG.attr elm, "fill", "hsl(0, 0%, #{l*100}%)"
       elm # Chainable
+
+    hsl: (elm, h, s, l)->
+      SVG.attr elm, "fill", "hsl(#{h*360}, #{s*100}%, #{l*100}%)"
+      elm # Chainable
     
     createGradient: (name, vertical, stops...)->
       options = if vertical

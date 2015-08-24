@@ -146,9 +146,13 @@ var slice = [].slice;
 
 
 
-Take(["update", "svg"], function(update, svg) {
-  var eyes, i, ling, makeEye, nEyePairs, phase, sing, styleEye, xing, ying;
+Take(["update", "SVG", "math"], function(update, SVG, math) {
+  var eyes, grey, i, ling, makeEye, move, nEyePairs, phase, phasor, scale, sing, styleEye, xing, ying;
   return;
+  phasor = math.phasor;
+  move = SVG.move;
+  grey = SVG.grey;
+  scale = SVG.scale;
   nEyePairs = 20;
   xing = phasor(50, 250, 1 / 12);
   ying = phasor(0, 10, 1 / 12);
@@ -162,7 +166,7 @@ Take(["update", "svg"], function(update, svg) {
   };
   makeEye = function(phase, x) {
     var eye;
-    eye = svg.create("circle", {
+    eye = SVG.create("circle", {
       r: 1
     });
     return styleEye(eye, phase, x);
@@ -283,6 +287,7 @@ Take(["update", "SVG", "math"], function(update, SVG, math) {
 
 Take(["update", "SVG", "math", "stage"], function(update, SVG, math, stage) {
   var gauss, grey, lerp, makeLayer, makeVein, move, phasor, primeN, ramp, rnd, rotate, rotateN, scale;
+  return;
   lerp = math.lerp;
   phasor = math.phasor;
   gauss = math.gauss;
@@ -583,6 +588,60 @@ Take(["update", "SVG", "math", "stage", "Tentacle"], function(update, SVG, math,
     return octo = {
       root: root
     };
+  });
+});
+
+Take(["update", "SVG", "math", "stage", "Tentacle"], function(update, SVG, math, stage, Tentacle) {
+  var group, input, rnd;
+  group = function(parent) {
+    return SVG.create("g", null, parent);
+  };
+  rnd = function(c, s) {
+    if (c == null) {
+      c = 0.5;
+    }
+    if (s == null) {
+      s = 1;
+    }
+    return math.lerp(c - s / 2, c + s / 2, Math.random());
+  };
+  Take("Circle", function(Circle) {
+    var angle, dist, i, j, results;
+    results = [];
+    for (i = j = 0; j < 100; i = ++j) {
+      angle = i / 100;
+      dist = math.lerp(0, 3, i);
+      results.push(Circle(angle, dist));
+    }
+    return results;
+  });
+  input = 0;
+  document.body.addEventListener("mousemove", function(e) {
+    return input = (e.clientY / window.innerHeight) - 0.5;
+  });
+  document.body.addEventListener("touchstart", function(e) {
+    return e.preventDefault();
+  });
+  document.body.addEventListener("touchmove", function(e) {
+    return input = (e.touches.item(0).clientY / window.innerHeight) - 0.5;
+  });
+  return Make("Circle", function(angle, dist) {
+    var circle, h;
+    circle = SVG.create("circle", {
+      r: 1
+    });
+    h = 0;
+    return update(function(t, dt) {
+      var d, dir, maxVel, velocity;
+      dir = input === 0 ? 1 : input / Math.abs(input);
+      maxVel = math.lerp(0, Math.pow(input, 7) * 100 + input / 100, angle);
+      velocity = maxVel;
+      h += velocity;
+      SVG.hsl(circle, h, 1, .5);
+      d = dist * math.gauss(-1, 1, h);
+      SVG.scale(circle, math.gauss(1, 100, h / 10));
+      return SVG.move(circle, Math.sin(h + angle * math.TAU) * d, Math.cos(h + angle * math.TAU) * d);
+    });
   });
 });
 
@@ -963,6 +1022,10 @@ Take("stage", function(stage) {
     },
     grey: function(elm, l) {
       SVG.attr(elm, "fill", "hsl(0, 0%, " + (l * 100) + "%)");
+      return elm;
+    },
+    hsl: function(elm, h, s, l) {
+      SVG.attr(elm, "fill", "hsl(" + (h * 360) + ", " + (s * 100) + "%, " + (l * 100) + "%)");
       return elm;
     },
     createGradient: function() {

@@ -1,5 +1,6 @@
 Take ["update", "SVG", "math", "stage"],
   (update, SVG, math, stage)->
+    return
     
     lerp = math.lerp
     phasor = math.phasor
