@@ -611,8 +611,7 @@ Take(["update", "SVG", "math"], function(update, SVG, math) {
       r: 1
     });
     return update(function(t, dt) {
-      var d, dir, maxVel, velocity;
-      dir = input === 0 ? 1 : input / Math.abs(input);
+      var d, maxVel, velocity;
       maxVel = math.lerp(0, Math.pow(input, 7) * 100 + input / 100, angle);
       velocity = maxVel;
       h += velocity;

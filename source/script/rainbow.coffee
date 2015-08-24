@@ -13,7 +13,6 @@ Take ["update", "SVG", "math"],
       circle = SVG.create "circle", r: 1
       
       update (t, dt)->
-        dir = if input is 0 then 1 else input/Math.abs(input)
         maxVel = math.lerp 0, Math.pow(input, 7) * 100 + input/100, angle
         velocity = maxVel # math.gauss 0, maxVel, t
         
