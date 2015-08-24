@@ -592,40 +592,45 @@ Take(["update", "SVG", "math", "stage", "Tentacle"], function(update, SVG, math,
 });
 
 Take(["update", "SVG", "math"], function(update, SVG, math) {
-  var input;
+  var input, setInput;
   input = 0;
   Take("Circle", function(Circle) {
     var angle, dist, i, j, results;
     results = [];
     for (i = j = 0; j < 100; i = ++j) {
-      angle = i / 100;
+      angle = i / 100 * math.TAU;
       dist = math.lerp(0, 3, i);
       results.push(Circle(angle, dist));
     }
     return results;
   });
   Make("Circle", function(angle, dist) {
-    var circle, h;
-    h = 0;
+    var circle, pos;
+    pos = 0;
     circle = SVG.create("circle", {
       r: 1
     });
     return update(function(t, dt) {
-      var d, maxVel, velocity;
-      maxVel = math.lerp(0, Math.pow(input, 7) * 100 + input / 100, angle);
-      velocity = maxVel;
-      h += velocity;
-      d = dist * math.gauss(-1, 1, h);
-      SVG.hsl(circle, h, 1, .5);
-      SVG.scale(circle, math.gauss(1, 100, h / 10));
-      return SVG.move(circle, Math.sin(h + angle * math.TAU) * d, Math.cos(h + angle * math.TAU) * d);
+      var r, s, velocity, x, y;
+      velocity = math.lerp(0, Math.pow(input, 7) * 100 + input / 100, angle);
+      pos += velocity;
+      r = dist * math.gauss(-1, 1, pos);
+      x = Math.sin(pos + angle) * r;
+      y = Math.cos(pos + angle) * r;
+      s = math.gauss(1, 100, pos / 10);
+      SVG.scale(circle, s);
+      SVG.move(circle, x, y);
+      return SVG.hsl(circle, pos, 1, .5);
     });
   });
+  setInput = function(v) {
+    return input = (v / window.innerHeight) - 0.5;
+  };
   document.body.addEventListener("mousemove", function(e) {
-    return input = (e.clientY / window.innerHeight) - 0.5;
+    return setInput(e.clientY);
   });
   document.body.addEventListener("touchmove", function(e) {
-    return input = (e.touches.item(0).clientY / window.innerHeight) - 0.5;
+    return setInput(e.touches.item(0).clientY);
   });
   return document.body.addEventListener("touchstart", function(e) {
     return e.preventDefault();
